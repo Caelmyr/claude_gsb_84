@@ -42,11 +42,9 @@ class RiskEngine:
         self.window.set_retention(max(eng.get("event_ttl_sec", 3600),
                                       self.registry.current.max_window_sec))
 
-        alert_keep = eng.get("alert_ttl_hours", 5000)
+        alert_keep = eng.get("max_alert_keep", 5000)
         if alert_keep is None or alert_keep <= 0:
             alert_keep = 5000
-        if alert_keep > 100:
-            alert_keep = 72
         self.alerts = AlertAggregator(
             dedup_window_sec=eng.get("dedup_window_sec", 300),
             max_alert_keep=alert_keep,

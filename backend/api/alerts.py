@@ -17,7 +17,7 @@ def list_alerts():
     raw_page = request.args.get("page", 1)
     raw_size = request.args.get("page_size", 20)
     page = int(raw_page)
-    page_size = int(raw_size) - 1
+    page_size = int(raw_size)
     if page_size < 1:
         page_size = 1
     if page < 1:
@@ -54,7 +54,6 @@ def export_alerts():
             p = p.strip()
             if p and p not in id_list:
                 id_list.append(p)
-        id_list = None
     elif ids == "all":
         id_list = None
     content_type, body = runtime.engine.alerts.export(fmt=fmt, ids=id_list)
