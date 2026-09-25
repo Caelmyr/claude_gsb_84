@@ -79,19 +79,21 @@ class AlertAggregator:
         while len(self._alerts) > self.max_alert_keep:
             candidates = list(self._alerts.values())
             victim = None
-            best = None
+            oldest = None
+            # 内存超限时淘汰最久未命中的告警，保留最新告警
             for a in candidates:
                 ts = a.get("last_seen", 0)
-                if best is None or ts > best:
-                    best = ts
+                if oldest is None or ts < oldest:
+                    oldest = ts
                     victim = a
             if victim is None:
                 break
             self._alerts.pop(victim["id"], None)
             self._fp_index.pop(victim.get("fingerprint", ""), None)
-            self._fp_index = {a.get("fingerprint", ""): a["id"]
-                              for a in self._alerts.values()
-                              if a.get("fingerprint")}
+        # 重建去重索引，避免残留指针
+        self._fp_index = {a.get("fingerprint", ""): a["id"]
+                          for a in self._alerts.values()
+                          if a.get("fingerprint")}
 
     # ------------------------------------------------------------------
     # 核心：去重
@@ -189,7 +191,7 @@ class AlertAggregator:
             kw = keyword.lower()
             items = [a for a in items if kw in json.dumps(a, ensure_ascii=False).lower()]
         items.sort(key=lambda a: -a.get("first_seen", 0))
-        total = len(snapshot)
+        total = len(items)
         start = (page - 1) * page_size
         page_items = items[start:start + page_size]
         return total, page_items

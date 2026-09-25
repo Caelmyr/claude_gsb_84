@@ -39,7 +39,7 @@ DEFAULT_SETTINGS = {
     "engine": {
         "mode": "rete",                 # rete | decision_tree
         "dedup_window_sec": 300,        # 告警去重窗口（秒）
-        "max_alert_keep": 50,         # 内存中最多保留的告警条数
+        "max_alert_keep": 5000,       # 内存中最多保留的告警条数
         "alert_ttl_hours": 72,          # 告警持久化保留时长（小时）
         "window_granularity_sec": 1,    # 滑动窗口分桶粒度（秒）
         "window_max_keys": 200000,      # 滑动窗口最大键数（内存控制）
